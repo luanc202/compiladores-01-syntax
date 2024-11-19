@@ -1,5 +1,5 @@
 package br.com.ufma;
 
-public class Tokens {
+public class Token {
 
 }
