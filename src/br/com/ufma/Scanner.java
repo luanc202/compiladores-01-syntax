@@ -1,9 +1,19 @@
 package br.com.ufma;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Scanner {
 
     private final byte[] input;
     private int current;
+
+    private static final Map<String, TokenType> keywords;
+
+    static {
+        keywords = new HashMap<>();
+        keywords.put("let",    TokenType.LET);
+    }
 
     public Scanner (byte[] input) {
         this.input = input;
@@ -25,11 +35,11 @@ public class Scanner {
     public Token nextToken () {
         char ch = peek();
 
-        removeWhitespaces();
-
         if (isAlpha(ch)) {
             return identifier();
         }
+
+        removeWhitespaces();
 
         if (ch == '0') {
             advance();
@@ -50,6 +60,14 @@ public class Scanner {
                 advance();
                 yield new Token(TokenType.EOF, TokenType.EOF.getValue());
             }
+            case '=' -> {
+                advance();
+                yield new Token(TokenType.EQUAL, TokenType.EQUAL.getValue());
+            }
+            case ';' -> {
+                advance();
+                yield new Token(TokenType.SEMICOLON, TokenType.SEMICOLON.getValue());
+            }
             default -> throw new Error("lexical error: no op token found when expected");
         };
 
@@ -66,10 +84,10 @@ public class Scanner {
     }
 
     private void removeWhitespaces() {
-        String ch = Character.toString(peek());
-        while (ch.equals(" ") || ch.equals("\r") || ch.equals("\t") || ch.equals("\n")) {
+        char ch = peek();
+        while (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') {
             advance();
-            ch = Character.toString(peek());
+            ch = peek();
         }
     }
 
@@ -89,7 +107,9 @@ public class Scanner {
         }
 
         String id = new String(input, start, current - start);
-        return new Token(TokenType.IDENT, id);
+        TokenType type = keywords.get(id);
+        if (type == null) type = TokenType.IDENT;
+        return new Token(type, id);
     }
 
 }
