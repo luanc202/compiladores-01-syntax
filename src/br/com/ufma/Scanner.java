@@ -27,6 +27,10 @@ public class Scanner {
 
         removeWhitespaces();
 
+        if (isAlpha(ch)) {
+            return identifier();
+        }
+
         if (ch == '0') {
             advance();
             return new Token(TokenType.NUMBER, Character.toString(ch));
@@ -67,6 +71,25 @@ public class Scanner {
             advance();
             ch = Character.toString(peek());
         }
+    }
+
+    private Boolean isAlpha(char c) {
+        return (c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || c == '_';
+    }
+
+    private Boolean isAlphanumeric(char c) {
+        return isAlpha(c) || Character.isDigit(c);
+    }
+
+    private Token identifier() {
+        int start = current;
+
+        while (isAlphanumeric(peek())) {
+            advance();
+        }
+
+        String id = new String(input, start, current - start);
+        return new Token(TokenType.IDENT, id);
     }
 
 }
