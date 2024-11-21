@@ -4,56 +4,50 @@ public class Parser {
 
     private final Scanner scanner;
 
-    private char currentToken;
-
-    private String[] operatorsList = {"+", "-"};
+    private Token currentToken;
 
     public Parser(byte[] input) {
         scanner = new Scanner(input);
         currentToken = scanner.nextToken();
     }
 
-    private void nextToken () {
+    private void nextToken() {
         currentToken = scanner.nextToken();
     }
 
-    private void match(char token) {
-        if (currentToken == token) {
+    private void match(TokenType token) {
+        if (currentToken.type == token) {
             nextToken();
-        }else {
+        } else {
             throw new Error("syntax error: invalid token");
         }
     }
 
-    void digit () {
-        if (Character.isDigit(currentToken)) {
-            System.out.println("push " + currentToken);
-            match(currentToken);
-        } else {
-            throw new Error("syntax error");
-        }
+    void number() {
+        System.out.println("push " + currentToken.lexeme);
+        match(TokenType.NUMBER);
     }
 
     void operator() {
-        if (currentToken == TokenType.PLUS.getChar()) {
-            match(TokenType.PLUS.getChar());
-            digit();
+        if (currentToken.type == TokenType.PLUS) {
+            match(TokenType.PLUS);
+            number();
             System.out.println("add");
             operator();
-        } else if (currentToken == TokenType.MINUS.getChar()) {
-            match(TokenType.MINUS.getChar());
-            digit();
+        } else if (currentToken.type == TokenType.MINUS) {
+            match(TokenType.MINUS);
+            number();
             System.out.println("sub");
             operator();
         }
     }
 
     void expression() {
-        digit();
+        number();
         operator();
     }
 
-    public void parse () {
+    public void parse() {
         expression();
     }
 }
