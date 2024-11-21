@@ -31,23 +31,46 @@ public class Parser {
     void operator() {
         if (currentToken.type == TokenType.PLUS) {
             match(TokenType.PLUS);
-            number();
+            term();
             System.out.println("add");
             operator();
         } else if (currentToken.type == TokenType.MINUS) {
             match(TokenType.MINUS);
-            number();
+            term();
             System.out.println("sub");
             operator();
         }
     }
 
     void expression() {
-        number();
+        term();
         operator();
     }
 
     public void parse() {
-        expression();
+        letStatement();
     }
+
+    private void term() {
+        if (currentToken.type == TokenType.NUMBER) {
+            number();
+        } else if (currentToken.type == TokenType.IDENT) {
+            System.out.println("push " + currentToken.lexeme);
+            match(TokenType.IDENT);
+        } else {
+            throw new Error("syntax error: expected ident or number");
+        }
+    }
+
+    void letStatement () {
+        match(TokenType.LET);
+        var id = currentToken.lexeme;
+        match(TokenType.IDENT);
+        match(TokenType.EQUAL);
+        expression();
+        System.out.println("pop "+id);
+        match(TokenType.SEMICOLON);
+    }
+
+
 }
