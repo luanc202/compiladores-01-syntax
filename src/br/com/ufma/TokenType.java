@@ -9,6 +9,8 @@ public enum TokenType {
     EQUAL("="),
     BLANK(" "),
     NEWLINE("\n"),
+    SEMICOLON(";"),
+    LET("let"),
     EOF("\0");
 
     private final String value;
