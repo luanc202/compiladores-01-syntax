@@ -24,6 +24,9 @@ public class Scanner {
 
     public Token nextToken () {
         char ch = peek();
+
+        removeWhitespaces();
+
         if (ch == '0') {
             advance();
             return new Token(TokenType.NUMBER, Character.toString(ch));
@@ -56,6 +59,14 @@ public class Scanner {
 
         String n = new String(input, start, current-start)  ;
         return new Token(TokenType.NUMBER, n);
+    }
+
+    private void removeWhitespaces() {
+        String ch = Character.toString(peek());
+        while (ch.equals(" ") || ch.equals("\r") || ch.equals("\t") || ch.equals("\n")) {
+            advance();
+            ch = Character.toString(peek());
+        }
     }
 
 }
