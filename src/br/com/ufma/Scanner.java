@@ -22,37 +22,40 @@ public class Scanner {
         }
     }
 
-    public String nextToken () {
+    public Token nextToken () {
         char ch = peek();
         if (ch == '0') {
             advance();
-            return Character.toString(ch);
+            return new Token(TokenType.NUMBER, Character.toString(ch));
         }  else if (Character.isDigit(ch))
             return number();
 
-        if (Character.isDigit(ch)) {
-            advance();
-            return Character.toString(ch);
-        }
-
         return switch (ch) {
-            case '+', '-' -> {
+            case '+' -> {
                 advance();
-                yield Character.toString(ch);
+                yield new Token(TokenType.PLUS, TokenType.PLUS.getValue());
             }
-            default -> throw new Error("lexical error: no op token found");
+            case '-' -> {
+                advance();
+                yield new Token(TokenType.MINUS, TokenType.MINUS.getValue());
+            }
+            case '\0' -> {
+                advance();
+                yield new Token(TokenType.EOF, TokenType.EOF.getValue());
+            }
+            default -> throw new Error("lexical error: no op token found when expected");
         };
 
     }
 
-    private String number() {
+    private Token number() {
         int start = current ;
         while (Character.isDigit(peek())) {
             advance();
         }
 
         String n = new String(input, start, current-start)  ;
-        return n;
+        return new Token(TokenType.NUMBER, n);
     }
 
 }
